@@ -3,12 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script>
+	function memberView(viewEmail) {
+		var viewUrl = "/member/" + viewEmail; 
+		console.log(viewUrl);
+
+ 		$.ajax({
+			type: 'get',
+			data: {"memail": viewEmail},
+			url: viewUrl,
+			dataType: 'json',
+			success: function(result, status, xhr){
+			console.log(status);
+			console.log(xhr);
+				var output = "<table border='1'>";
+				output += "<tr><th>이메일</th>";
+				output += 		"<th>이름</th></tr>";
+				output += "<tr><td>"+result.memail+"</td>";
+				output += "<td>"+result.mname+"</td></tr>";
+				output += "</table>";
+				$("#memberview").html(output);
+			}, error: function() {
+				console.log("상세조회 오류");
+			}
+		}); 
+ 
+ }
+ 
+ function memberDelete(mnumber){
+		var deleteUrl = "/member/"+mnumber;
+		$.ajax({
+			type: "delete",
+			url: deleteUrl,
+			success: function(result){
+				if(result=="ok"){
+					location.href='/member/list';
+				} else {
+					console.log("삭제 실패");
+				}
+			}, error: function(){
+				console.log("삭제 오류");
+			}
+		});
+	}
+ 
+</script>
+
 </head>
 <body>
 	<h2>memberlist.html</h2>
 	<table border='1'>
 		<tr>
+
 			<th>회원번호</th>
+			<th>이메일 조회</th>
 			<th>이메일</th>
 			<th>이름</th>
 			<th>비밀번호</th>
@@ -17,10 +68,15 @@
 		</tr>
 		<tr th:each="member: ${memberList}">
 			<td><span th:text="${member.mnumber}"></span></td>
+		<!-- 대괄호두개는 typeleaf에서 데이터를 바로뿌려줄때 사용하는 기능이다. -->
 			<td><a th:onclick="memberView([[${member.memail}]])">[[${member.memail}]]</a></td>
 			<td><span th:text="${member.memail}"></span></td>
 			<td><span th:text="${member.mname}"></span></td>
 			<td><span th:text="${member.mpassword}"></span></td>
+			<!-- 기존 : /member?memail=${member.memail} 
+			     rest : /member/aa@aa
+			     게시판에서 2체이지에 있는 15번글을 조회한다면
+			     /board/2/15 -->
 			<td><a th:href="@{'/member/'+${member.memail}}">조회</a></td>
 			<td><button th:onclick="memberDelete([[${member.mnumber}]])">삭제</button>
 		</tr>
