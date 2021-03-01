@@ -108,6 +108,7 @@ public class MemberController {
 	}
 	
 	// 수정 처리
+	// requestbody로 form데이터 불러오기
 	@PutMapping("/member/update")
 	public @ResponseBody String memberUpdateProcess(@RequestBody MemberDTO member) {
 		// 기존 데이터가 존재하는 경우 join을 호출하면 알아서 update쿼리가 실행됨
